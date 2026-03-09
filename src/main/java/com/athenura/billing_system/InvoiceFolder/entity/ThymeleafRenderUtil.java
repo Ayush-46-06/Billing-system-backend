@@ -4,9 +4,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-
 import lombok.RequiredArgsConstructor;
-
 import java.io.ByteArrayOutputStream;
 
 @Component
