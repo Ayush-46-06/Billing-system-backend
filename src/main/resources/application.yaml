@@ -12,6 +12,8 @@ spring:
         format_sql: true
 
   security:
+    admin-secret: A@athenura321
+    manager-secret: M@athenura321
     user:
       name: disable
 
@@ -31,7 +33,6 @@ cloudinary:
   cloud-name: dijuocb4e
   api-key: 393353355664867
   api-secret: wdpw7wvTGTwLYBt1wHGozc1Q9D4
-
 
 
 logging:
