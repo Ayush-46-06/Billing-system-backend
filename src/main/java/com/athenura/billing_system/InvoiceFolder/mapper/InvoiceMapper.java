@@ -1,5 +1,6 @@
 package com.athenura.billing_system.InvoiceFolder.mapper;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceRequestDTO;
@@ -18,6 +19,7 @@ public class InvoiceMapper {
         invoice.setClient(client);
         invoice.setInvoiceDate(dto.getInvoiceDate());
         invoice.setDueDate(dto.getDueDate());
+        invoice.setTaxType(dto.getTaxType());
         invoice.setStatus(InvoiceStatus.DRAFT);
 
         return invoice;
@@ -36,9 +38,14 @@ public class InvoiceMapper {
                 invoice.getSubtotal(),
                 invoice.getTaxTotal(),
                 invoice.getGrandTotal(),
-                invoice.getStatus(),   // ✅ FIXED
+                invoice.getCgst(),
+                invoice.getSgst(),
+                invoice.getIgst(),
+                invoice.getTaxType(),
+                invoice.getStatus(),
                 invoice.getPdfUrl(),
-                invoice.getItems()
+                invoice.getItems() == null ? Collections.emptyList()
+                        : invoice.getItems()
                         .stream()
                         .map(InvoiceItemMapper::toDTO)
                         .collect(Collectors.toList())

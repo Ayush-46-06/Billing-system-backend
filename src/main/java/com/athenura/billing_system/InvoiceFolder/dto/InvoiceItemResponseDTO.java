@@ -18,7 +18,6 @@ public class InvoiceItemResponseDTO {
 
     private String description;
     private BigDecimal rate;
-    private BigDecimal taxPercent;
-    private BigDecimal taxAmount;
+
     private BigDecimal lineTotal;
 }

@@ -24,7 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Entity
 @Table(name = "invoices")
 @Getter
@@ -32,6 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Invoice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,8 +47,19 @@ public class Invoice {
     private LocalDate dueDate;
 
     private BigDecimal subtotal;
+
+    private BigDecimal taxPercent;
+
+    private BigDecimal cgst;
+    private BigDecimal sgst;
+    private BigDecimal igst;
+
     private BigDecimal taxTotal;
+
     private BigDecimal grandTotal;
+
+    @Enumerated(EnumType.STRING)
+    private TaxType taxType;
 
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
@@ -57,5 +68,4 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<InvoiceItem> items = new ArrayList<>();
-
 }

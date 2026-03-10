@@ -38,9 +38,9 @@ public class InvoiceItem {
     private ServiceEntity service;
 
     private String description;
-    private BigDecimal rate;
-    private BigDecimal taxPercent;
-    private BigDecimal lineTotal;
-    // Getters & Setters
-}
 
+    private BigDecimal rate;
+
+    private BigDecimal lineTotal;
+
+}

@@ -23,6 +23,8 @@ public class User {
 
     private String password;
 
+    private String secretKey;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 }

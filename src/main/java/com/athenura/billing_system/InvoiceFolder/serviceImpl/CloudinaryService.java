@@ -22,8 +22,9 @@ public class CloudinaryService {
                 pdfBytes,
                 ObjectUtils.asMap(
                         "resource_type", "auto",
-                        "public_id", "invoices/" + invoiceNumber,
-                        "format", "pdf"));
+                        "public_id", "invoices/" + invoiceNumber
+                )
+        );
 
         return uploadResult.get("secure_url").toString();
     }

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.athenura.billing_system.InvoiceFolder.entity.InvoiceStatus;
+import com.athenura.billing_system.InvoiceFolder.entity.TaxType;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +21,7 @@ public class InvoiceResponseDTO {
 
     private Long clientId;
     private String clientName;
-    private String clientEmail;   
+    private String clientEmail;
 
     private LocalDate invoiceDate;
     private LocalDate dueDate;
@@ -28,7 +30,14 @@ public class InvoiceResponseDTO {
     private BigDecimal taxTotal;
     private BigDecimal grandTotal;
 
+    private BigDecimal cgst;
+    private BigDecimal sgst;
+    private BigDecimal igst;
+
+    private TaxType taxType;
+
     private InvoiceStatus status;
+
     private String pdfUrl;
 
     private List<InvoiceItemResponseDTO> items;

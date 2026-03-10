@@ -16,15 +16,14 @@ public class InvoiceItemMapper {
             ServiceEntity service,
             String description,
             BigDecimal rate,
-            BigDecimal taxPercent,
             BigDecimal lineTotal) {
 
         InvoiceItem item = new InvoiceItem();
+
         item.setInvoice(invoice);
         item.setService(service);
         item.setDescription(description);
         item.setRate(rate);
-        item.setTaxPercent(taxPercent);
         item.setLineTotal(lineTotal);
 
         return item;
@@ -32,17 +31,12 @@ public class InvoiceItemMapper {
 
     public static InvoiceItemResponseDTO toDTO(InvoiceItem item) {
 
-        BigDecimal taxAmount = item.getLineTotal()
-                .subtract(item.getRate());
-
         return new InvoiceItemResponseDTO(
                 item.getId(),
                 item.getService().getId(),
                 item.getService().getServiceName(),
                 item.getDescription(),
                 item.getRate(),
-                item.getTaxPercent(),
-                taxAmount,
                 item.getLineTotal()
         );
     }
