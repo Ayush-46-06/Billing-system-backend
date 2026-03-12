@@ -1,12 +1,9 @@
 package com.athenura.billing_system.InvoiceFolder.entity;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.athenura.billing_system.client.entity.Client;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,6 +41,7 @@ public class Invoice {
     private Client client;
 
     private LocalDate invoiceDate;
+
     private LocalDate dueDate;
 
     private BigDecimal subtotal;
@@ -51,7 +49,9 @@ public class Invoice {
     private BigDecimal taxPercent;
 
     private BigDecimal cgst;
+
     private BigDecimal sgst;
+
     private BigDecimal igst;
 
     private BigDecimal taxTotal;

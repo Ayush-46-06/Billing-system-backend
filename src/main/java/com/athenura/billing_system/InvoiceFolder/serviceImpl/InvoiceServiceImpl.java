@@ -1,14 +1,11 @@
 package com.athenura.billing_system.InvoiceFolder.serviceImpl;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceItemRequestDTO;
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceRequestDTO;
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceResponseDTO;
@@ -24,7 +21,6 @@ import com.athenura.billing_system.client.entity.Client;
 import com.athenura.billing_system.client.repository.ClientRepository;
 import com.athenura.billing_system.service.entity.ServiceEntity;
 import com.athenura.billing_system.service.repository.ServiceRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -113,10 +109,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(InvoiceStatus.PENDING);
 
-        Invoice savedInvoice = invoiceRepository.save(invoice);
-
-        //  FIXED ASYNC CALL
-        asyncProcessor.processInvoice(savedInvoice.getId());
+Invoice savedInvoice = invoiceRepository.saveAndFlush(invoice);
+asyncProcessor.processInvoice(savedInvoice.getId());
 
         return InvoiceMapper.toDTO(savedInvoice);
     }

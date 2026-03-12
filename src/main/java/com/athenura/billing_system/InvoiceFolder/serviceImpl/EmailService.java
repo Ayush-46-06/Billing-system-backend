@@ -26,7 +26,7 @@ public class EmailService {
 
         helper.setTo(toEmail);
         helper.setSubject("Your Invoice");
-        helper.setText("Please find attached your invoice.");
+        helper.setText("Please find attached your service invoice.");
 
         helper.addAttachment(
                 fileName,

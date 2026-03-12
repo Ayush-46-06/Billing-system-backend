@@ -20,4 +20,6 @@ public class ServiceController {
     public List<ServiceEntity> getAllServices(){
         return serviceRepository.findAll();
     }
+
+    
 }
