@@ -1,6 +1,6 @@
 package com.athenura.billing_system.controller;
 
-import com.athenura.billing_system.dto.CreateUserRequest;
+import com.athenura.billing_system.user.dto.CreateUserRequest;
 import com.athenura.billing_system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
