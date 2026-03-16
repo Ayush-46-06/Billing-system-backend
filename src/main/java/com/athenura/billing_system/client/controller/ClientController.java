@@ -3,9 +3,12 @@ package com.athenura.billing_system.client.controller;
 import com.athenura.billing_system.client.dto.CreateClientRequest;
 import com.athenura.billing_system.client.dto.ClientResponse;
 import com.athenura.billing_system.client.service.ClientService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,27 +21,38 @@ public class ClientController {
 
     private final ClientService clientService;
 
+    // CREATE CLIENT
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PostMapping
-    public ClientResponse createClient(
+    public ResponseEntity<ClientResponse> createClient(
             @Valid @RequestBody CreateClientRequest request) {
-        return clientService.createClient(request);
+
+        ClientResponse response = clientService.createClient(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // GET CLIENT BY ID
     @GetMapping("/{id}")
-    public ClientResponse getClient(@PathVariable Long id) {
-        return clientService.getClient(id);
+    public ResponseEntity<ClientResponse> getClient(@PathVariable Long id) {
+
+        ClientResponse response = clientService.getClient(id);
+        return ResponseEntity.ok(response);
     }
 
+    // GET ALL CLIENTS
     @GetMapping
-    public List<ClientResponse> getAllClients() {
-        return clientService.getAllClients();
+    public ResponseEntity<List<ClientResponse>> getAllClients() {
+
+        List<ClientResponse> clients = clientService.getAllClients();
+        return ResponseEntity.ok(clients);
     }
 
+    // DELETE CLIENT
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping("/{id}")
-    public String deleteClient(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+
         clientService.deleteClient(id);
-        return "Client deleted successfully";
+        return ResponseEntity.noContent().build();
     }
 }
