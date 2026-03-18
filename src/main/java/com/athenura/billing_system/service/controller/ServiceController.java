@@ -48,6 +48,7 @@ public class ServiceController {
         return ResponseEntity.ok().body(serviceResponseDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteService(@PathVariable Long id) {
         serviceLayerMethod.deleteService(id);
