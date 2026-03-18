@@ -1,8 +1,10 @@
 package com.athenura.billing_system.InvoiceFolder.serviceImpl;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,112 +30,120 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class InvoiceServiceImpl implements InvoiceService {
 
-    private final InvoiceRepository invoiceRepository;
-    private final ClientRepository clientRepository;
-    private final ServiceRepository serviceRepository;
-    private final AsyncInvoiceProcessor asyncProcessor;
+        private final InvoiceRepository invoiceRepository;
+        private final ClientRepository clientRepository;
+        private final ServiceRepository serviceRepository;
+        private final AsyncInvoiceProcessor asyncProcessor;
 
-    private static final BigDecimal GST_PERCENT = new BigDecimal("18");
+        private static final BigDecimal GST_PERCENT = new BigDecimal("18");
 
-    @Override
-    public InvoiceResponseDTO createInvoice(InvoiceRequestDTO dto) {
+        @Override
+        public InvoiceResponseDTO createInvoice(InvoiceRequestDTO dto) {
 
-        Client client = clientRepository.findById(dto.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                Client client = clientRepository.findById(dto.getClientId())
+                                .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        Invoice invoice = InvoiceMapper.toEntity(dto, client);
-        invoice.setInvoiceNumber(generateInvoiceNumber());
+                Invoice invoice = InvoiceMapper.toEntity(dto, client);
+                invoice.setInvoiceNumber(generateInvoiceNumber());
 
-        BigDecimal subtotal = BigDecimal.ZERO;
+                BigDecimal subtotal = BigDecimal.ZERO;
 
-        for (InvoiceItemRequestDTO itemDTO : dto.getItems()) {
+                for (InvoiceItemRequestDTO itemDTO : dto.getItems()) {
 
-            ServiceEntity service = serviceRepository.findById(itemDTO.getServiceId())
-                    .orElseThrow(() -> new RuntimeException("Service not found"));
+                        ServiceEntity service = serviceRepository.findById(itemDTO.getServiceId())
+                                        .orElseThrow(() -> new RuntimeException("Service not found"));
 
-            BigDecimal rate = BigDecimal.valueOf(service.getBasePrice());
+                        BigDecimal rate = BigDecimal.valueOf(service.getBasePrice());
 
-            BigDecimal lineTotal = rate;
+                        BigDecimal lineTotal = rate;
 
-            subtotal = subtotal.add(lineTotal);
+                        subtotal = subtotal.add(lineTotal);
 
-            InvoiceItem item = InvoiceItemMapper.toEntity(
-                    invoice,
-                    service,
-                    service.getDescription(),
-                    rate,
-                    lineTotal
-            );
+                        InvoiceItem item = InvoiceItemMapper.toEntity(
+                                        invoice,
+                                        service,
+                                        service.getDescription(),
+                                        rate,
+                                        lineTotal);
 
-            invoice.getItems().add(item);
+                        invoice.getItems().add(item);
+                }
+
+                invoice.setSubtotal(subtotal);
+
+                TaxType taxType = dto.getTaxType();
+
+                BigDecimal taxTotal = BigDecimal.ZERO;
+                BigDecimal cgst = BigDecimal.ZERO;
+                BigDecimal sgst = BigDecimal.ZERO;
+                BigDecimal igst = BigDecimal.ZERO;
+
+                if (taxType != null && taxType != TaxType.NONE) {
+
+                        taxTotal = subtotal
+                                        .multiply(GST_PERCENT)
+                                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                        if (taxType == TaxType.CGST_SGST) {
+
+                                BigDecimal half = taxTotal
+                                                .divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);
+
+                                cgst = half;
+                                sgst = half;
+
+                        } else if (taxType == TaxType.IGST) {
+
+                                igst = taxTotal;
+                        }
+                }
+
+                BigDecimal grandTotal = subtotal.add(taxTotal);
+
+                invoice.setTaxPercent(GST_PERCENT);
+                invoice.setTaxTotal(taxTotal);
+                invoice.setCgst(cgst);
+                invoice.setSgst(sgst);
+                invoice.setIgst(igst);
+                invoice.setGrandTotal(grandTotal);
+                invoice.setTaxType(taxType);
+
+                invoice.setStatus(InvoiceStatus.PENDING);
+
+                Invoice savedInvoice = invoiceRepository.saveAndFlush(invoice);
+                asyncProcessor.processInvoice(savedInvoice.getId());
+
+                return InvoiceMapper.toDTO(savedInvoice);
         }
 
-        invoice.setSubtotal(subtotal);
+        private String generateInvoiceNumber() {
 
-        TaxType taxType = dto.getTaxType();
+                String datePart = LocalDate.now()
+                                .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        BigDecimal taxTotal = BigDecimal.ZERO;
-        BigDecimal cgst = BigDecimal.ZERO;
-        BigDecimal sgst = BigDecimal.ZERO;
-        BigDecimal igst = BigDecimal.ZERO;
+                String randomPart = UUID.randomUUID()
+                                .toString()
+                                .substring(0, 5)
+                                .toUpperCase();
 
-        if (taxType != null && taxType != TaxType.NONE) {
-
-            taxTotal = subtotal
-                    .multiply(GST_PERCENT)
-                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-            if (taxType == TaxType.CGST_SGST) {
-
-                BigDecimal half = taxTotal
-                        .divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);
-
-                cgst = half;
-                sgst = half;
-
-            } else if (taxType == TaxType.IGST) {
-
-                igst = taxTotal;
-            }
+                return "INV-" + datePart + "-" + randomPart;
         }
 
-        BigDecimal grandTotal = subtotal.add(taxTotal);
+        @Override
+        public InvoiceResponseDTO getInvoiceById(Long id) {
 
-        invoice.setTaxPercent(GST_PERCENT);
-        invoice.setTaxTotal(taxTotal);
-        invoice.setCgst(cgst);
-        invoice.setSgst(sgst);
-        invoice.setIgst(igst);
-        invoice.setGrandTotal(grandTotal);
-        invoice.setTaxType(taxType);
+                Invoice invoice = invoiceRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Invoice not found"));
 
-        invoice.setStatus(InvoiceStatus.PENDING);
+                return InvoiceMapper.toDTO(invoice);
+        }
 
-Invoice savedInvoice = invoiceRepository.saveAndFlush(invoice);
-asyncProcessor.processInvoice(savedInvoice.getId());
+        @Override
+        public List<InvoiceResponseDTO> getAllInvoices() {
+                List<Invoice> invoices = invoiceRepository.findAll();
+                return invoices.stream()
+                                .map(InvoiceMapper::toDTO)
+                                .toList();
+        }
 
-        return InvoiceMapper.toDTO(savedInvoice);
-    }
-
-    private String generateInvoiceNumber() {
-
-        String datePart = LocalDate.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-        String randomPart = UUID.randomUUID()
-                .toString()
-                .substring(0, 5)
-                .toUpperCase();
-
-        return "INV-" + datePart + "-" + randomPart;
-    }
-
-    @Override
-    public InvoiceResponseDTO getInvoiceById(Long id) {
-
-        Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
-
-        return InvoiceMapper.toDTO(invoice);
-    }
 }
