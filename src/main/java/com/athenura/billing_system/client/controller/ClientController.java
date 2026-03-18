@@ -21,8 +21,6 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    // CREATE CLIENT
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @PostMapping
     public ResponseEntity<ClientResponse> createClient(
             @Valid @RequestBody CreateClientRequest request) {
@@ -48,10 +46,8 @@ public class ClientController {
     }
 
     // DELETE CLIENT
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-
         clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
