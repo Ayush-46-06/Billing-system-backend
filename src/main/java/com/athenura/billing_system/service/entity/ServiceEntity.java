@@ -27,5 +27,6 @@ public class ServiceEntity {
     @Column(nullable = false)
     private Double gstPercentage;
 
-    private Boolean active;
+    @Enumerated(EnumType.STRING)
+    private ServiceStatus active;
 }

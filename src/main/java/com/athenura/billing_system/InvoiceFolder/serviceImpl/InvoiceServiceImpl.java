@@ -60,7 +60,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             InvoiceItem item = InvoiceItemMapper.toEntity(
                     invoice,
                     service,
-                    service.getServiceName(),
+                    service.getDescription(),
                     rate,
                     lineTotal
             );
