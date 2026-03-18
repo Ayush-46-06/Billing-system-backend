@@ -28,11 +28,4 @@ public class Clouds {
                 "api_secret", apiSecret
         ));
     }
-
-    @PostConstruct
-    public void printKeys() {
-        System.out.println("Cloud Name: " + cloudName);
-        System.out.println("API Key: " + apiKey);
-        System.out.println("API Secret: " + apiSecret);
-    }
 }

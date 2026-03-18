@@ -1,12 +1,9 @@
 package com.athenura.billing_system.client.entity;
 
-import com.athenura.billing_system.service.entity.ServiceEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "clients")

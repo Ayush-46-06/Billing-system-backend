@@ -7,5 +7,4 @@ public record CreateUserRequest(
         String password,
         String role,
         String secretKey
-
 ) {}
