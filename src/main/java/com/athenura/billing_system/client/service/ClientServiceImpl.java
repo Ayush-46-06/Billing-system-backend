@@ -80,4 +80,20 @@ public class ClientServiceImpl implements ClientService {
         );
     }
 
+
+    @Override
+    public ClientResponse updateClient(Long id, CreateClientRequest request) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Client not found"));
+
+        client.setName(request.name());
+        client.setEmail(request.email());
+        client.setPhone(request.phone());
+        client.setGstNumber(request.gstNumber());
+        client.setAddress(request.address());
+
+        Client updated = clientRepository.save(client);
+        return mapToResponse(updated);
+    }
+
 }

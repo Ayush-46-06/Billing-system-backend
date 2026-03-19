@@ -23,39 +23,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/manager/services")
+@RequestMapping("/services")
 public class ServiceController {
 
     private final ServiceLayerMethod serviceLayerMethod;
-
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
     public ResponseEntity<serviceResponseDto> createService(@RequestBody serviceRequestDto requestDto) {
         serviceResponseDto serviceResponseDto = serviceLayerMethod.createService(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(serviceResponseDto);
     }
-
-    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/fetch")
     public ResponseEntity<List<serviceResponseDto>> getAllServices() {
         List<serviceResponseDto> services = serviceLayerMethod.getAllService();
         return ResponseEntity.ok().body(services);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<serviceResponseDto> updateService(@PathVariable Long id, @RequestBody ServiceUpdateRequestDto requestDto) {
         serviceResponseDto serviceResponseDto = serviceLayerMethod.updateService(id, requestDto);
         return ResponseEntity.ok().body(serviceResponseDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteService(@PathVariable Long id) {
         serviceLayerMethod.deleteService(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/fetch/{id}")
     public ResponseEntity<serviceResponseDto> getServiceById(@PathVariable Long id) {
         serviceResponseDto serviceResponseDto = serviceLayerMethod.getServiceByName(id);
         return ResponseEntity.ok().body(serviceResponseDto);

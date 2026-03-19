@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/create/clients")
+@RequestMapping("/clients")
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ClientResponse> createClient(
             @Valid @RequestBody CreateClientRequest request) {
 
@@ -30,7 +30,7 @@ public class ClientController {
     }
 
     // GET CLIENT BY ID
-    @GetMapping("/{id}")
+    @GetMapping("/fetch/{id}")
     public ResponseEntity<ClientResponse> getClient(@PathVariable Long id) {
 
         ClientResponse response = clientService.getClient(id);
@@ -38,7 +38,7 @@ public class ClientController {
     }
 
     // GET ALL CLIENTS
-    @GetMapping
+    @GetMapping("/fetch")
     public ResponseEntity<List<ClientResponse>> getAllClients() {
 
         List<ClientResponse> clients = clientService.getAllClients();
@@ -46,9 +46,19 @@ public class ClientController {
     }
 
     // DELETE CLIENT
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ClientResponse> updateClient(@PathVariable Long id,
+            @Valid @RequestBody CreateClientRequest request) {
+
+        ClientResponse response = clientService.updateClient(id, request);
+        return ResponseEntity.ok(response);
+    }
+
 }

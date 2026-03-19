@@ -13,5 +13,7 @@ public interface ClientService {
 
     List<ClientResponse> getAllClients();
 
+    ClientResponse updateClient(Long id, CreateClientRequest request);
+
     void deleteClient(Long id);
 }
