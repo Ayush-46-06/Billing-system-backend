@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/services")
+@RequestMapping("/api/services")
 public class ServiceController {
 
     private final ServiceLayerMethod serviceLayerMethod;
@@ -34,7 +34,7 @@ public class ServiceController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(serviceResponseDto);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/fetch")
     public ResponseEntity<List<serviceResponseDto>> getAllServices() {
         List<serviceResponseDto> services = serviceLayerMethod.getAllService();

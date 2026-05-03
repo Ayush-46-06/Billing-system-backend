@@ -1,9 +1,8 @@
 package com.athenura.billing_system.security;
 
 import com.athenura.billing_system.security.jwt.JwtAuthenticationFilter;
-
+import org.springframework.http.HttpMethod;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 @Configuration
 @EnableMethodSecurity
@@ -24,21 +25,43 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/invoices/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/clients/**").hasAnyRole("ADMIN","MANAGER")
-                        .requestMatchers("/services/**").hasAnyRole("ADMIN","MANAGER")
-                        .anyRequest().authenticated())
+
+
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+
+                        .requestMatchers("/api/taxes/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        .requestMatchers("/api/admin/**")
+                        .hasAuthority("ROLE_ADMIN")
+
+                        .requestMatchers("/api/clients/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        .requestMatchers("/api/payments/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        .requestMatchers("/api/invoices/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+
+                        .requestMatchers("/uploads/**").permitAll()
+
+                        .anyRequest().authenticated()
+
+                )
                 .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class
+                );
+
         return http.build();
     }
 
@@ -49,9 +72,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config)
-            throws Exception {
-
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }

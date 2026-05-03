@@ -13,9 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class serviceResponseDto {
 
-        String ServiceName;
-        String Description;
-        Double BasePrice;
+        private Long id;
+        String serviceName;
+        String description;
+        Double basePrice;
         Double gstPercentage;
-        ServiceStatus Active;
+        ServiceStatus active;
 }

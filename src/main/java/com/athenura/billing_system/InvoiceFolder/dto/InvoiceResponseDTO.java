@@ -5,15 +5,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.athenura.billing_system.InvoiceFolder.entity.InvoiceStatus;
+import com.athenura.billing_system.InvoiceFolder.entity.PaymentStatus;
 import com.athenura.billing_system.InvoiceFolder.entity.TaxType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class InvoiceResponseDTO {
 
     private Long id;
@@ -35,10 +38,12 @@ public class InvoiceResponseDTO {
     private BigDecimal igst;
 
     private TaxType taxType;
-
     private InvoiceStatus status;
-
     private String pdfUrl;
 
     private List<InvoiceItemResponseDTO> items;
+    private PaymentStatus paymentStatus;
+
+    private String createdBy;
+    private String createdByRole;
 }

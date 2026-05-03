@@ -12,9 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class serviceRequestDto {
 
-    private String ServiceName;
-    private String Description;
-    private Double BasePrice;
+    private String serviceName;
+    private String description;
+    private Double basePrice;
     private Double gstPercentage;
 
 }

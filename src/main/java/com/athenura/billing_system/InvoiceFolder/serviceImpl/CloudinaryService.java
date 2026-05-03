@@ -1,6 +1,8 @@
 package com.athenura.billing_system.InvoiceFolder.serviceImpl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -27,5 +29,16 @@ public class CloudinaryService {
         );
 
         return uploadResult.get("secure_url").toString();
+    }
+
+
+    public byte[] downloadPdf(String pdfUrl) {
+        try {
+            URL url = new URL(pdfUrl);
+            InputStream inputStream = url.openStream();
+            return inputStream.readAllBytes();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to download PDF from Cloudinary", e);
+        }
     }
 }

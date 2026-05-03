@@ -4,5 +4,6 @@ public enum InvoiceStatus {
     DRAFT,
     SENT,
     FAILED,
-    PENDING
+    PENDING,
+
 }

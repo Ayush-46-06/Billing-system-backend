@@ -25,7 +25,7 @@ public class ServiceEntity {
     private Double basePrice;
 
     @Column(nullable = false)
-    private Double gstPercentage;
+
 
     @Enumerated(EnumType.STRING)
     private ServiceStatus active;

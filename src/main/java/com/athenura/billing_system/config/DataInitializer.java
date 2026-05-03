@@ -1,8 +1,9 @@
 package com.athenura.billing_system.config;
 
-import com.athenura.billing_system.repository.UserRepository;
+
 import com.athenura.billing_system.user.Role;
 import com.athenura.billing_system.user.User;
+import com.athenura.billing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

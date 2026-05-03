@@ -25,4 +25,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private String resetToken;
+    private java.time.LocalDateTime tokenExpiry;
+
+    private String profileImage;
+
+    private String department;
 }

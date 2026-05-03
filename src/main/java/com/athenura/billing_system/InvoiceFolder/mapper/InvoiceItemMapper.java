@@ -31,10 +31,20 @@ public class InvoiceItemMapper {
 
     public static InvoiceItemResponseDTO toDTO(InvoiceItem item) {
 
+        Long serviceId = null;
+        String serviceName = null;
+
+        if (item.getService() != null) {
+            serviceId = item.getService().getId();
+            serviceName = item.getService().getServiceName();
+        } else {
+            serviceName = item.getDescription();
+        }
+
         return new InvoiceItemResponseDTO(
                 item.getId(),
-                item.getService().getId(),
-                item.getService().getServiceName(),
+                serviceId,
+                serviceName,
                 item.getDescription(),
                 item.getRate(),
                 item.getLineTotal()

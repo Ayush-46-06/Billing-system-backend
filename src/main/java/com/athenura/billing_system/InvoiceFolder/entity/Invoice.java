@@ -1,9 +1,11 @@
 package com.athenura.billing_system.InvoiceFolder.entity;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import com.athenura.billing_system.client.entity.Client;
+import com.athenura.billing_system.InvoiceFolder.entity.PaymentStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Entity
 @Table(name = "invoices")
 @Getter
@@ -37,25 +40,20 @@ public class Invoice {
     private String invoiceNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", nullable = true)
     private Client client;
 
     private LocalDate invoiceDate;
-
     private LocalDate dueDate;
-
     private BigDecimal subtotal;
 
+    @Column(name = "tax_percent")
     private BigDecimal taxPercent;
 
     private BigDecimal cgst;
-
     private BigDecimal sgst;
-
     private BigDecimal igst;
-
     private BigDecimal taxTotal;
-
     private BigDecimal grandTotal;
 
     @Enumerated(EnumType.STRING)
@@ -66,6 +64,19 @@ public class Invoice {
 
     private String pdfUrl;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
-    private List<InvoiceItem> items = new ArrayList<>();
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "created_by_role")
+    private String createdByRole;
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceItem> items;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus = PaymentStatus.UNPAID;
+
+    @Column(name = "client_name")
+    private String clientName;
+
 }

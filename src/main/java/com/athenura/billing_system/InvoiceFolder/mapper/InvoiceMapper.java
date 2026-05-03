@@ -14,25 +14,45 @@ public class InvoiceMapper {
     private InvoiceMapper() {}
 
     public static Invoice toEntity(InvoiceRequestDTO dto, Client client) {
+        if (dto == null) return null;
 
         Invoice invoice = new Invoice();
         invoice.setClient(client);
         invoice.setInvoiceDate(dto.getInvoiceDate());
         invoice.setDueDate(dto.getDueDate());
-        invoice.setTaxType(dto.getTaxType());
-        invoice.setStatus(InvoiceStatus.DRAFT);
+
+
+        if (dto.getPaymentStatus() != null) {
+            invoice.setPaymentStatus(dto.getPaymentStatus());
+        }
+
+        if (dto.getTaxType() != null) {
+            invoice.setTaxType(dto.getTaxType());
+        } else {
+            invoice.setTaxType(com.athenura.billing_system.InvoiceFolder.entity.TaxType.NONE);
+        }
+
+        // status
+        if (dto.getStatus() != null) {
+            invoice.setStatus(dto.getStatus());
+        } else {
+            invoice.setStatus(InvoiceStatus.PENDING);
+        }
 
         return invoice;
     }
 
     public static InvoiceResponseDTO toDTO(Invoice invoice) {
+        if (invoice == null) return null;
 
         return new InvoiceResponseDTO(
                 invoice.getId(),
                 invoice.getInvoiceNumber(),
-                invoice.getClient().getId(),
-                invoice.getClient().getName(),
-                invoice.getClient().getEmail(),
+                invoice.getClient() != null ? invoice.getClient().getId() : null,
+                invoice.getClient() != null
+                        ? invoice.getClient().getName()
+                        : invoice.getClientName(),
+                invoice.getClient() != null ? invoice.getClient().getEmail() : null,
                 invoice.getInvoiceDate(),
                 invoice.getDueDate(),
                 invoice.getSubtotal(),
@@ -46,9 +66,12 @@ public class InvoiceMapper {
                 invoice.getPdfUrl(),
                 invoice.getItems() == null ? Collections.emptyList()
                         : invoice.getItems()
-                        .stream()
-                        .map(InvoiceItemMapper::toDTO)
-                        .collect(Collectors.toList())
+                          .stream()
+                          .map(InvoiceItemMapper::toDTO)
+                          .collect(Collectors.toList()),
+                invoice.getPaymentStatus(),
+                invoice.getCreatedBy(),
+                invoice.getCreatedByRole()
         );
     }
 }

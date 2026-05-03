@@ -21,57 +21,51 @@ public class AsyncInvoiceProcessor {
     private final EmailService emailService;
     private final CloudinaryService cloudinaryService;
     private final InvoiceRepository invoiceRepository;
-@Async
-@Transactional
-public void processInvoice(Long invoiceId) {
+    @Async
+    @Transactional
+    public void processInvoice(Long invoiceId) {
 
-    Invoice invoice = null;
+        System.out.println(" ASYNC STARTED for invoice: " + invoiceId);
 
-    try {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElse(null);
+        if (invoice == null) {
+            System.out.println("Invoice not found");
+            return;
+        }
 
-        System.out.println("STEP 1 : Fetch invoice");
+        try {
+            System.out.println("STEP 1: Set PENDING");
+            invoice.setStatus(InvoiceStatus.PENDING);
+            invoiceRepository.save(invoice);
 
-        invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+            System.out.println("STEP 2: Convert DTO");
+            InvoiceResponseDTO dto = InvoiceMapper.toDTO(invoice);
 
-        Client client = invoice.getClient();
+            System.out.println("STEP 3: Generate PDF");
+            byte[] pdfBytes = invoicePdfService.generateInvoicePdf(dto);
 
-        System.out.println("STEP 2 : Convert DTO");
+            System.out.println("STEP 4: Upload to Cloudinary");
+            String pdfUrl = cloudinaryService.uploadPdf(pdfBytes, invoice.getInvoiceNumber());
 
-        InvoiceResponseDTO dto = InvoiceMapper.toDTO(invoice);
+            if (pdfUrl == null || pdfUrl.isEmpty()) {
+                throw new RuntimeException("Cloudinary returned null URL");
+            }
 
-        System.out.println("STEP 3 : Generate PDF");
+            System.out.println("STEP 5: Save PDF URL");
+            invoice.setPdfUrl(pdfUrl);
 
-        byte[] pdfBytes = invoicePdfService.generateInvoicePdf(dto);
+            System.out.println("STEP 6: Mark READY");
+            invoice.setStatus(InvoiceStatus.DRAFT);
+            invoiceRepository.save(invoice);
 
-        System.out.println("STEP 4 : Upload Cloudinary");
+            System.out.println("PDF SUCCESS for invoice: " + invoice.getInvoiceNumber());
 
-        String pdfUrl = cloudinaryService.uploadPdf(pdfBytes, invoice.getInvoiceNumber());
+        } catch (Exception e) {
 
-        invoice.setPdfUrl(pdfUrl);
+            System.out.println("PDF FAILED for invoice: " + invoiceId);
+            e.printStackTrace();
 
-        System.out.println("STEP 5 : Send Email");
-
-        emailService.sendInvoiceEmail(
-                client.getEmail(),
-                pdfBytes,
-                invoice.getInvoiceNumber() + ".pdf"
-        );
-
-        invoice.setStatus(InvoiceStatus.SENT);
-
-        invoiceRepository.save(invoice);
-
-        System.out.println("ASYNC SUCCESS");
-
-    } catch (Exception e) {
-
-        e.printStackTrace();
-
-        if (invoice != null) {
             invoice.setStatus(InvoiceStatus.FAILED);
             invoiceRepository.save(invoice);
         }
-    }
-}
-}
+    }}

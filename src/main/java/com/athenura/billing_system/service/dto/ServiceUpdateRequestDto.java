@@ -13,10 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ServiceUpdateRequestDto {
-    private String ServiceName;
-    private String Description;
-    private Double BasePrice;
-    private Double gstPercentage;
-    private ServiceStatus Active;
+    private String serviceName;
+    private String description;
+    private Double basePrice;
+    private ServiceStatus active;
 
 }

@@ -1,10 +1,5 @@
 package com.athenura.billing_system.service.serviceLayerImp;
 
-
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.athenura.billing_system.service.dto.ServiceUpdateRequestDto;
 import com.athenura.billing_system.service.dto.serviceRequestDto;
 import com.athenura.billing_system.service.dto.serviceResponseDto;
@@ -12,7 +7,9 @@ import com.athenura.billing_system.service.entity.ServiceEntity;
 import com.athenura.billing_system.service.mapper.ServiceMapper;
 import com.athenura.billing_system.service.repository.ServiceRepository;
 import com.athenura.billing_system.service.serviceLayer.ServiceLayerMethod;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 @Service
 public class serviceImpl implements ServiceLayerMethod {
@@ -45,25 +42,21 @@ public class serviceImpl implements ServiceLayerMethod {
         existingService.setServiceName(requestDto.getServiceName());
         existingService.setDescription(requestDto.getDescription());
         existingService.setBasePrice(requestDto.getBasePrice());
-        existingService.setGstPercentage(requestDto.getGstPercentage());
+//        existingService.setGstPercentage(requestDto.getGstPercentage());
         existingService.setActive(requestDto.getActive());
         ServiceEntity updatedService = serviceRepository.save(existingService);
         return ServiceMapper.toServiceResponseDto(updatedService);
     }
 
-@Override
-public List<serviceResponseDto> getAllService() {
+    @Override
+    public List<serviceResponseDto> getAllService() {
 
-    List<ServiceEntity> services = serviceRepository.findAll();
+        List<ServiceEntity> services = serviceRepository.findAll();
 
-    if (services.isEmpty()) {
-        throw new RuntimeException("No services found");
+        return services.stream()
+                .map(ServiceMapper::toServiceResponseDto)
+                .toList();
     }
-
-    return services.stream()
-            .map(ServiceMapper::toServiceResponseDto)
-            .toList();
-}
 
     @Override
     public void deleteService(Long id) {

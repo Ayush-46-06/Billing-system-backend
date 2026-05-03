@@ -1,6 +1,7 @@
 package com.athenura.billing_system.security;
 
-import com.athenura.billing_system.repository.UserRepository;
+
+import com.athenura.billing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
