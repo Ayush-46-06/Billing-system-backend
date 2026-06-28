@@ -3,7 +3,7 @@ package com.athenura.billing_system.InvoiceFolder.controller;
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceRequestDTO;
 import com.athenura.billing_system.InvoiceFolder.dto.InvoiceResponseDTO;
 import com.athenura.billing_system.InvoiceFolder.services.InvoiceService;
-import jakarta.mail.MessagingException;
+
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class InvoiceController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<InvoiceResponseDTO> updateInvoice(@PathVariable Long id, @RequestBody InvoiceRequestDTO dto) throws MessagingException {
+    public ResponseEntity<InvoiceResponseDTO> updateInvoice(@PathVariable Long id, @RequestBody InvoiceRequestDTO dto) {
         return ResponseEntity.ok(invoiceService.updateInvoice(id, dto));
     }
 }

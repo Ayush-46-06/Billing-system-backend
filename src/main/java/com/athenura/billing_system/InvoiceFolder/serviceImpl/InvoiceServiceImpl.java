@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import com.athenura.billing_system.InvoiceFolder.entity.*;
 import com.athenura.billing_system.user.User;
 import com.athenura.billing_system.user.repository.UserRepository;
-import jakarta.mail.MessagingException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
@@ -95,7 +95,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         @Override
-        public InvoiceResponseDTO updateInvoice(Long id, InvoiceRequestDTO dto) throws MessagingException {
+        public InvoiceResponseDTO updateInvoice(Long id, InvoiceRequestDTO dto) {
                 Invoice invoice = Optional.ofNullable(invoiceRepository.findByIdWithDetails(id))
                         .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + id));
 
