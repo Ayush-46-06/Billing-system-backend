@@ -19,17 +19,12 @@ spring:
     user:
       name: disable
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+brevo:
+  api:
+    key: ${BREVO_API_KEY:}
+  sender:
+    email: ${BREVO_SENDER_EMAIL:info@billing.com}
+    name: ${BREVO_SENDER_NAME:Billing System}
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
