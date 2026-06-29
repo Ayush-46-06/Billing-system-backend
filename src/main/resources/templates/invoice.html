@@ -141,7 +141,7 @@
 
     <div class="header">
         <div class="company-info">
-            <img th:src="@{classpath:/static/images/Athenura.png}" alt="Athenura Logo" class="company-logo"/>
+            <img th:if="${logoBase64 != null}" th:src="${logoBase64}" alt="Athenura Logo" class="company-logo"/>
             <p>123 Corporate Blvd, City, Country</p>
             <p>Email: info@billing.com | Phone: +91 9876543210</p>
         </div>
